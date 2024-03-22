@@ -11,19 +11,31 @@ class fc:
         self.out_features = out_features
         self.weights = np.zeros(shape=(in_features))
         self.bias = np.zeros(shape=out_features)
+        self.out = {}
 
-    def init_weight(self,weight,bias):
+        self.dw= None
+        self.db= None
+
+    def set_weight(self,weight,bias):
         self.weights= weight
-        self.bias  =bias
+        self.bias = bias
         
     def forward(self,arr):
-
+        self.out = {"X" : arr }
         arr = np.array(arr)
         weights = np.array(self.weights)
         bias = np.array(self.bias)
         return np.dot(arr, weights.T) + bias
-    def backward(self,arr):
-        pass
+    
+    def backward(self,dout=1):
+        self.dw  = np.dot(dout.T , self.out['X'])
+        self.db = dout.sum(axis=0)
+
+         # 이전 레이어로 전달할 그래디언트 계산
+        grad_input = np.dot(dout, self.weights)
+        
+        return grad_input
+
     def __call__(self, arr) -> Any:
         return self.forward(arr)
 if __name__ == "__main__" :

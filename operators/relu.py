@@ -10,19 +10,20 @@ class relu:
     """
     def __init__(self,inplace=False):
         self.inplace= inplace
-    def forward(self,input_feature):
+        self.out = np.array([0])
+    def forward(self,x):
+        self.out = x[x<0]
         if self.inplace :
-            input_feature = np.maximum(0,input_feature)
-            return input_feature , None
+            x = np.maximum(0,x)
+            return x 
         else:
-            out = np.maximum(0,input_feature)
-            return out,input_feature
+            out = np.maximum(0,x)
+            return out
 
     def backward(self,dout):
-        pass
-
-
-
+        #masking
+        dout[self.out ] = 0
+        return dout 
 
     def __call__(self, input_feature) -> Any:
         return self.forward(input_feature)
