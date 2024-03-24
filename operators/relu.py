@@ -10,20 +10,17 @@ class relu:
     """
     def __init__(self,inplace=False):
         self.inplace= inplace
-        self.out = np.array([0])
+        self.mask  = None
     def forward(self,x):
-        self.out = x[x<0]
-        if self.inplace :
-            x = np.maximum(0,x)
-            return x 
-        else:
-            out = np.maximum(0,x)
-            return out
+        self.mask = ( x<=0 )
+        out= x.copy()
+        out[self.mask] = 0
+        return out
 
-    def backward(self,dout):
-        #masking
-        dout[self.out ] = 0
-        return dout 
+    def backward(self, dout):
+        # ReLU 함수의 역전파
+        dout[self.mask] = 0  # 음수 데이터는 전부 0으로 만들어준다.
+        return dout
 
     def __call__(self, input_feature) -> Any:
         return self.forward(input_feature)

@@ -4,3 +4,4 @@ from .fc import fc
 from .relu import relu
 from .softmax import softmax
 from .softmaxLoss import softmaxLoss
+from .SGD import SGD
