@@ -8,7 +8,7 @@ class MNIST_FN:
         self.layers = OrderedDict()
         self._init_weights("He")
         self.softmax = nn.softmaxLoss()
-
+        self.weight_decay_lambda= 0.05
 
     def __call__(self,x) -> Any:
         return self.predict(x)
@@ -36,7 +36,7 @@ class MNIST_FN:
         weight_decay = 0
         for idx in range(1, 5):
             W = self.weights['W' + str(idx)]
-            weight_decay += 0.5 * 0 * np.sum(W ** 2)
+            weight_decay += 0.5 * self.weight_decay_lambda * np.sum(W ** 2)
 
         return self.softmax.forward(y, t) + weight_decay
     
@@ -61,7 +61,8 @@ class MNIST_FN:
             dout = layer.backward(dout)
         grads = {}
         for idx in range(1, 5):
-            grads['W' + str(idx)] = self.layers[f"linear{idx}"].dw 
+            W = self.weights['W' + str(idx)]
+            grads['W' + str(idx)] = self.layers[f"linear{idx}"].dw
             grads['B' + str(idx)] = self.layers[f"linear{idx}"].db
 
         return grads
